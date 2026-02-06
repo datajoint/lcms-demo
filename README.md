@@ -2,7 +2,7 @@
 
 A demonstration DataJoint pipeline for LC-MS (Liquid Chromatography-Mass Spectrometry) data processing.
 
-This project showcases DataJoint best practices with a realistic scientific workflow.
+This project showcases DataJoint 2.1 best practices with a realistic scientific workflow.
 
 ## Schema Overview
 
@@ -32,14 +32,24 @@ uv sync --group dev
 
 ## Quick Start
 
-### 1. Configure Database
+### 1. Configure Database (DataJoint 2.1)
+
+DataJoint 2.1 uses a layered configuration system:
 
 ```bash
-# Copy configuration template
-cp dj_local_conf.json.example dj_local_conf.json
+# Copy configuration templates
+cp datajoint.json.example datajoint.json
+cp -r .secrets.example .secrets
 
-# Edit with your database credentials
+# Edit credentials in .secrets/
+echo "your_username" > .secrets/database.user
+echo "your_password" > .secrets/database.password
 ```
+
+**Configuration sources (in priority order):**
+1. Environment variables (`DJ_HOST`, `DJ_USER`, `DJ_PASS`, etc.)
+2. Secrets directory (`.secrets/database.user`, `.secrets/database.password`)
+3. Config file (`datajoint.json`)
 
 ### 2. Use the Pipeline
 
@@ -62,15 +72,43 @@ summary = populate_demo_data(n_subjects=3, scans_per_session=50)
 print(f"Created {summary['sessions']} sessions")
 ```
 
+## Configuration
+
+### datajoint.json
+
+```json
+{
+    "database": {
+        "host": "localhost",
+        "database_prefix": "lcms_"
+    }
+}
+```
+
+The `database_prefix` automatically prefixes all schema names (e.g., `subject` → `lcms_subject`).
+
+### Environment Variables
+
+| Variable | Description |
+|----------|-------------|
+| `DJ_HOST` | Database hostname |
+| `DJ_USER` | Database username |
+| `DJ_PASS` | Database password |
+| `DJ_DATABASE_PREFIX` | Schema name prefix |
+
 ## Local Development with Docker
 
 ```bash
 # Start local MySQL
 cd local && docker compose up -d
 
-# Configure DataJoint for local database
-from lcms_demo.config import use_local_database
-use_local_database()
+# Configure via environment
+export DJ_HOST=localhost
+export DJ_USER=datajoint
+export DJ_PASS=datajoint
+
+# Or use the helper function
+python -c "from lcms_demo.config import use_local_database; use_local_database()"
 
 # Import and use
 from lcms_demo import subject, session, scan
@@ -83,7 +121,7 @@ lcms-demo/
 ├── src/
 │   └── lcms_demo/
 │       ├── __init__.py       # Package initialization
-│       ├── config.py         # Database configuration
+│       ├── config.py         # Configuration utilities
 │       ├── subject.py        # Subject, Sample tables
 │       ├── session.py        # Instrument, Method, Session tables
 │       ├── scan.py           # Scan, Spectrum, PeakList tables
@@ -92,8 +130,9 @@ lcms-demo/
 │   ├── unit/                 # Fast tests (no database)
 │   └── integration/          # Database tests
 ├── local/                    # Docker MySQL setup
-├── pyproject.toml            # Package configuration
-└── dj_local_conf.json.example
+├── datajoint.json.example    # Configuration template
+├── .secrets.example/         # Credentials template
+└── pyproject.toml            # Package configuration
 ```
 
 ## Simulation Options

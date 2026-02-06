@@ -15,9 +15,10 @@ Session : Manual
 
 import datajoint as dj
 
-from lcms_demo.config import get_schema_prefix
+from lcms_demo import subject  # noqa: F401 - required for foreign key
 
-schema = dj.Schema(f"{get_schema_prefix()}session")
+# Schema name is automatically prefixed by dj.config.database.database_prefix
+schema = dj.Schema("session")
 
 
 @schema

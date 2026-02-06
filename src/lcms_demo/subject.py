@@ -13,9 +13,8 @@ Sample : Manual
 
 import datajoint as dj
 
-from lcms_demo.config import get_schema_prefix
-
-schema = dj.Schema(f"{get_schema_prefix()}subject")
+# Schema name is automatically prefixed by dj.config.database.database_prefix
+schema = dj.Schema("subject")
 
 
 @schema

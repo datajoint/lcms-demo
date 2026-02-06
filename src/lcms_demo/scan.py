@@ -17,9 +17,9 @@ import datajoint as dj
 import numpy as np
 
 from lcms_demo import session
-from lcms_demo.config import get_schema_prefix
 
-schema = dj.Schema(f"{get_schema_prefix()}scan")
+# Schema name is automatically prefixed by dj.config.database.database_prefix
+schema = dj.Schema("scan")
 
 
 @schema

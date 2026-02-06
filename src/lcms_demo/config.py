@@ -1,57 +1,35 @@
 """
-Database configuration for the LC-MS demo pipeline.
+Database configuration utilities for the LC-MS demo pipeline.
 
-DataJoint loads configuration from environment variables or dj_local_conf.json.
-This module provides utilities for schema prefixing and database mode switching.
+DataJoint 2.1 Configuration
+---------------------------
+DataJoint automatically loads configuration from multiple sources (in priority order):
 
-Environment Variables
----------------------
-DJ_HOST : str
-    Database hostname (default: localhost)
-DJ_USER : str
-    Database username
-DJ_PASS : str
-    Database password
+1. Environment variables (``DJ_HOST``, ``DJ_USER``, ``DJ_PASS``, etc.)
+2. Secrets directory (``.secrets/database.user``, ``.secrets/database.password``)
+3. Project config file (``datajoint.json``)
+
+Schema Prefix
+-------------
+Set ``database.database_prefix`` in datajoint.json or use ``DJ_DATABASE_PREFIX``
+environment variable to prefix all schema names (e.g., ``lcms_`` → ``lcms_subject``).
+
+Setup
+-----
+1. Copy ``datajoint.json.example`` to ``datajoint.json``
+2. Copy ``.secrets.example/`` to ``.secrets/`` and add credentials
+3. Import datajoint - it connects automatically
+
+Example
+-------
+>>> import datajoint as dj
+>>> dj.config.database.host
+'localhost'
+>>> dj.config.database.database_prefix
+'lcms_'
 """
 
-import json
 import os
-from functools import lru_cache
-from pathlib import Path
-
-
-@lru_cache(maxsize=1)
-def _load_config() -> dict:
-    """Load dj_local_conf.json from current directory or parents."""
-    # Search current directory and parents for config file
-    search_path = Path.cwd()
-    for _ in range(5):  # Limit search depth
-        config_path = search_path / "dj_local_conf.json"
-        if config_path.exists():
-            with open(config_path) as f:
-                return json.load(f)
-        if search_path.parent == search_path:
-            break
-        search_path = search_path.parent
-    return {}
-
-
-def get_schema_prefix() -> str:
-    """
-    Get schema prefix from configuration.
-
-    Returns
-    -------
-    str
-        Schema prefix (e.g., 'lcms_demo_'), or empty string if not set.
-
-    Notes
-    -----
-    The schema prefix is read from dj_local_conf.json under:
-    {"custom": {"schema_prefix": "your_prefix_"}}
-    """
-    config = _load_config()
-    return config.get("custom", {}).get("schema_prefix", "")
 
 
 def use_local_database() -> None:
@@ -74,13 +52,13 @@ def use_local_database() -> None:
 
 def use_remote_database() -> None:
     """
-    Clear environment overrides, using dj_local_conf.json settings.
+    Clear environment overrides, using datajoint.json settings.
 
     Example
     -------
     >>> from lcms_demo.config import use_remote_database
     >>> use_remote_database()
-    >>> from lcms_demo import subject  # Uses config file settings
+    >>> from lcms_demo import subject  # Uses datajoint.json settings
     """
     for var in ["DJ_HOST", "DJ_USER", "DJ_PASS"]:
         os.environ.pop(var, None)

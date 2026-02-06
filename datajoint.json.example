@@ -1,0 +1,8 @@
+{
+    "database": {
+        "host": "localhost",
+        "user": null,
+        "password": null,
+        "database_prefix": "lcms_"
+    }
+}
