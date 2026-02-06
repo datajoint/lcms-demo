@@ -23,13 +23,11 @@ erDiagram
 # Using pip
 pip install lcms-demo
 
-# Using uv (recommended)
-uv sync
-```
+# From source (editable install)
+pip install -e .
 
-For development:
-```bash
-uv sync --extra dev
+# With development dependencies (using uv)
+uv sync --group dev
 ```
 
 ## Quick Start
@@ -82,18 +80,20 @@ from lcms_demo import subject, session, scan
 
 ```
 lcms-demo/
-├── lcms_demo/
-│   ├── __init__.py       # Package initialization
-│   ├── config.py         # Database configuration
-│   ├── subject.py        # Subject, Sample tables
-│   ├── session.py        # Instrument, Method, Session tables
-│   ├── scan.py           # Scan, Spectrum, PeakList tables
-│   └── simulation/       # Data generation utilities
+├── src/
+│   └── lcms_demo/
+│       ├── __init__.py       # Package initialization
+│       ├── config.py         # Database configuration
+│       ├── subject.py        # Subject, Sample tables
+│       ├── session.py        # Instrument, Method, Session tables
+│       ├── scan.py           # Scan, Spectrum, PeakList tables
+│       └── simulation/       # Data generation utilities
 ├── tests/
-│   ├── unit/             # Fast tests (no database)
-│   └── integration/      # Database tests
-├── local/                # Docker MySQL setup
-└── docs/                 # Documentation
+│   ├── unit/                 # Fast tests (no database)
+│   └── integration/          # Database tests
+├── local/                    # Docker MySQL setup
+├── pyproject.toml            # Package configuration
+└── dj_local_conf.json.example
 ```
 
 ## Simulation Options
@@ -124,17 +124,21 @@ summary = populate_nvs4821_study(
 )
 ```
 
-## Testing
+## Development
 
 ```bash
-# Run all tests
-pytest
+# Install with dev dependencies
+uv sync --group dev
 
-# Run only unit tests (fast, no database)
-pytest tests/unit/ -m unit
+# Run unit tests (fast, no database)
+pytest tests/unit/ -v
 
-# Run integration tests (requires Docker or external database)
-pytest tests/integration/ -m integration
+# Run all tests (requires Docker)
+pytest -v
+
+# Lint and format
+ruff check src/
+ruff format src/
 ```
 
 ## License

@@ -17,11 +17,11 @@ populate_nvs4821_study
 from lcms_demo.simulation.generators import generate_chromatogram, generate_spectrum
 
 __all__ = [
-    "generate_spectrum",
     "generate_chromatogram",
+    "generate_spectrum",
     "populate_demo_data",
-    "populate_session",
     "populate_nvs4821_study",
+    "populate_session",
 ]
 
 

@@ -1,11 +1,19 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
 [project]
 name = "lcms-demo"
 version = "0.1.0"
 description = "Demo DataJoint pipeline for LC-MS data processing"
 readme = "README.md"
-license = {text = "MIT"}
 requires-python = ">=3.10"
+license = "MIT"
+license-files = ["LICENSE"]
 authors = [
+    {name = "DataJoint", email = "support@datajoint.com"},
+]
+maintainers = [
     {name = "DataJoint", email = "support@datajoint.com"},
 ]
 keywords = ["datajoint", "lcms", "mass-spectrometry", "pipeline", "demo"]
@@ -13,9 +21,12 @@ classifiers = [
     "Development Status :: 4 - Beta",
     "Intended Audience :: Science/Research",
     "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent",
+    "Programming Language :: Python :: 3",
     "Programming Language :: Python :: 3.10",
     "Programming Language :: Python :: 3.11",
     "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
     "Topic :: Scientific/Engineering :: Bio-Informatics",
 ]
 dependencies = [
@@ -26,35 +37,61 @@ dependencies = [
 ]
 
 [project.optional-dependencies]
-mzml = ["pyteomics"]  # For parsing real mzML files
+mzml = ["pyteomics"]
 plotting = ["matplotlib"]
-dev = [
-    "pytest",
-    "pytest-cov",
-    "ruff",
-    "testcontainers[mysql]",
-]
-all = ["lcms-demo[mzml,plotting,dev]"]
 
 [project.urls]
 Homepage = "https://github.com/datajoint/lcms-demo"
 Documentation = "https://docs.datajoint.com"
 Repository = "https://github.com/datajoint/lcms-demo"
+Issues = "https://github.com/datajoint/lcms-demo/issues"
+Changelog = "https://github.com/datajoint/lcms-demo/releases"
 
-[build-system]
-requires = ["hatchling"]
-build-backend = "hatchling.build"
+# PEP 735: Dependency Groups (for development tools)
+[dependency-groups]
+test = [
+    "pytest>=8.0",
+    "pytest-cov",
+    "testcontainers[mysql]>=4.0",
+]
+lint = [
+    "ruff>=0.4",
+]
+dev = [
+    {include-group = "test"},
+    {include-group = "lint"},
+]
+
+[tool.hatch.build.targets.sdist]
+include = [
+    "/src",
+    "/tests",
+]
 
 [tool.hatch.build.targets.wheel]
-packages = ["lcms_demo"]
+packages = ["src/lcms_demo"]
 
 [tool.ruff]
+src = ["src"]
 line-length = 88
 target-version = "py310"
 
 [tool.ruff.lint]
-select = ["E", "F", "I", "W"]
-ignore = ["E501"]
+select = [
+    "E",      # pycodestyle errors
+    "F",      # pyflakes
+    "I",      # isort
+    "W",      # pycodestyle warnings
+    "UP",     # pyupgrade
+    "RUF",    # ruff-specific
+]
+ignore = [
+    "E501",   # line too long (handled by formatter)
+    "RUF012", # mutable class attributes (DataJoint uses `contents` for Lookup tables)
+]
+
+[tool.ruff.lint.isort]
+known-first-party = ["lcms_demo"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
@@ -62,4 +99,18 @@ python_files = "test_*.py"
 markers = [
     "unit: Fast tests without database access",
     "integration: Tests requiring database access",
+]
+filterwarnings = [
+    "ignore::DeprecationWarning:testcontainers.*",
+]
+
+[tool.coverage.run]
+source = ["src/lcms_demo"]
+branch = true
+
+[tool.coverage.report]
+exclude_lines = [
+    "pragma: no cover",
+    "if TYPE_CHECKING:",
+    "raise NotImplementedError",
 ]

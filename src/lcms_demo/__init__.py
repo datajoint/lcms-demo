@@ -27,4 +27,4 @@ def __getattr__(name):
     raise AttributeError(f"module {__name__!r} has no attribute {name!r}")
 
 
-__all__ = ["subject", "session", "scan", "__version__"]
+__all__ = ["__version__", "scan", "session", "subject"]

@@ -15,7 +15,6 @@ Session : Manual
 
 import datajoint as dj
 
-from lcms_demo import subject
 from lcms_demo.config import get_schema_prefix
 
 schema = dj.Schema(f"{get_schema_prefix()}session")

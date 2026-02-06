@@ -22,11 +22,17 @@ from pathlib import Path
 
 @lru_cache(maxsize=1)
 def _load_config() -> dict:
-    """Load dj_local_conf.json from project root."""
-    config_path = Path(__file__).parent.parent / "dj_local_conf.json"
-    if config_path.exists():
-        with open(config_path) as f:
-            return json.load(f)
+    """Load dj_local_conf.json from current directory or parents."""
+    # Search current directory and parents for config file
+    search_path = Path.cwd()
+    for _ in range(5):  # Limit search depth
+        config_path = search_path / "dj_local_conf.json"
+        if config_path.exists():
+            with open(config_path) as f:
+                return json.load(f)
+        if search_path.parent == search_path:
+            break
+        search_path = search_path.parent
     return {}
 
 
