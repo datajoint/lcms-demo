@@ -7,7 +7,7 @@ from real mzML files. For simulated data, see lcms_demo.simulation.
 
 import numpy as np
 
-from lcms_demo import scan, session
+from lcms_demo.pipeline import scan, session
 
 
 def ingest_scans(session_key: dict) -> None:

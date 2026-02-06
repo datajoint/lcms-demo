@@ -6,7 +6,7 @@ Tables: Scans, Spectra, Peaks (with Part tables for individual data)
 
 import datajoint as dj
 
-from lcms_demo import session
+from lcms_demo.pipeline import session
 
 schema = dj.Schema("scan")
 

@@ -6,7 +6,7 @@ Tables: Instrument, AcquisitionMethod, Session
 
 import datajoint as dj
 
-from lcms_demo import subject
+from lcms_demo.pipeline import subject
 
 schema = dj.Schema("session")
 

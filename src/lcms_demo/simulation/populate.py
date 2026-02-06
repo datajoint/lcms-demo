@@ -4,7 +4,7 @@ Functions to populate DataJoint tables with simulated data.
 
 from datetime import datetime
 
-from lcms_demo import scan, session, subject
+from lcms_demo.pipeline import scan, session, subject
 from lcms_demo.simulation.generators import generate_chromatogram
 
 
