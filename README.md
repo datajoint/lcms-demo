@@ -18,12 +18,24 @@ The pipeline models the LC-MS data analysis workflow:
 
 4. **MassAnalysis**: Extracts full mass spectral arrays (m/z and intensity vectors) for each scan
 
-5. **PeakDetection**: Detects peaks in each spectrum using signal processing algorithms (scipy.signal.find_peaks)
+5. **PeakDetection**: Detects peaks in each spectrum using signal processing algorithms (scipy.signal.find_peaks), parameterized by `PeakDetectionParams`
 
 Tables are named after the **process** they represent, while part tables contain the **artifacts** produced by that process:
 - `Acquisition` → `Acquisition.Scan` (individual scan metadata)
 - `MassAnalysis` → `MassAnalysis.Spectrum` (full m/z and intensity arrays)
 - `PeakDetection` → `PeakDetection.Peak` (detected peaks with SNR)
+
+### Parameterized Peak Detection
+
+`PeakDetection` depends on `PeakDetectionParams`, a lookup table that defines algorithm parameters. This allows running peak detection with different settings on the same data:
+
+| peak_params_id | height_factor | prominence_factor | min_distance | Description |
+|----------------|---------------|-------------------|--------------|-------------|
+| 0 | 3.0 | 2.0 | 3 | Default |
+| 1 | 2.0 | 1.5 | 2 | Sensitive (more peaks) |
+| 2 | 5.0 | 3.0 | 5 | Stringent (fewer peaks) |
+
+Each `MassAnalysis` entry generates multiple `PeakDetection` results, one per parameter set.
 
 ## Installation
 
@@ -125,7 +137,7 @@ lcms-demo/
 │       ├── pipeline/         # Schema definitions
 │       │   ├── subject.py    # Subject, Sample tables
 │       │   ├── session.py    # Instrument, Method, Session tables
-│       │   └── scan.py       # Acquisition, MassAnalysis, PeakDetection tables
+│       │   └── scan.py       # Acquisition, MassAnalysis, PeakDetectionParams, PeakDetection
 │       └── simulation/       # Data generation utilities
 ├── notebooks/                # Jupyter notebooks
 │   ├── 01_inspect.ipynb      # Pipeline diagram and data
