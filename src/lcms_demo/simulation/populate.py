@@ -47,11 +47,17 @@ def populate_session(
             "sample_description": f"Demo sample {sample_id}",
         })
 
-    # Create session with simulated data path encoding parameters
-    session_datetime = datetime.now()
+    # Determine next session_idx for this sample
+    existing_sessions = session.Session & sample_key
+    if existing_sessions:
+        max_idx = max(existing_sessions.fetch("session_idx"))
+        session_idx = max_idx + 1
+    else:
+        session_idx = 1
+
     session_key = {
         **sample_key,
-        "session_datetime": session_datetime,
+        "session_idx": session_idx,
     }
 
     # Encode simulation parameters in the path
@@ -59,6 +65,7 @@ def populate_session(
 
     session.Session.insert1({
         **session_key,
+        "session_datetime": datetime.now(),
         "instrument_id": instrument_id,
         "method_id": method_id,
         "raw_data_path": raw_data_path,

@@ -50,8 +50,9 @@ class Session(dj.Manual):
     definition = """
     # LC-MS acquisition session
     -> subject.Sample
-    session_datetime : datetime
+    session_idx : int32  # session index within sample
     ---
+    session_datetime : datetime
     -> Instrument
     -> AcquisitionMethod
     raw_data_path : varchar(512)
