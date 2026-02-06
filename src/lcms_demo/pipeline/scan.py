@@ -12,6 +12,14 @@ from lcms_demo.pipeline import session
 schema = dj.Schema("scan")
 
 
+def _parse_simulated_path(raw_data_path: str) -> tuple[int, int] | None:
+    """Parse simulation parameters from path. Returns (seed, n_scans) or None."""
+    if raw_data_path.startswith("simulate://"):
+        parts = raw_data_path.replace("simulate://", "").split("/")
+        return int(parts[0]), int(parts[1])
+    return None
+
+
 @schema
 class Scans(dj.Imported):
     definition = """
@@ -35,9 +43,36 @@ class Scans(dj.Imported):
         """
 
     def make(self, key):
-        from pyteomics import mzml
-
         raw_data_path = (session.Session & key).fetch1("raw_data_path")
+        sim_params = _parse_simulated_path(raw_data_path)
+
+        if sim_params:
+            self._make_simulated(key, *sim_params)
+        else:
+            self._make_from_mzml(key, raw_data_path)
+
+    def _make_simulated(self, key, seed: int, n_scans: int):
+        from lcms_demo.simulation.generators import generate_chromatogram
+
+        scans_data = generate_chromatogram(n_scans=n_scans, seed=seed)
+
+        scan_entries = []
+        for scan_number, scan_data in enumerate(scans_data, start=1):
+            scan_entries.append({
+                **key,
+                "scan_number": scan_number,
+                "retention_time": scan_data["retention_time"],
+                "ms_level": 1,
+                "total_ion_current": scan_data["total_ion_current"],
+                "base_peak_mz": scan_data["base_peak_mz"],
+                "base_peak_intensity": scan_data["base_peak_intensity"],
+            })
+
+        self.insert1({**key, "n_scans": len(scan_entries)})
+        self.Scan.insert(scan_entries)
+
+    def _make_from_mzml(self, key, raw_data_path: str):
+        from pyteomics import mzml
 
         scan_entries = []
         with mzml.read(raw_data_path) as reader:
@@ -91,9 +126,33 @@ class Spectra(dj.Imported):
         """
 
     def make(self, key):
-        from pyteomics import mzml
-
         raw_data_path = (session.Session & key).fetch1("raw_data_path")
+        sim_params = _parse_simulated_path(raw_data_path)
+
+        if sim_params:
+            self._make_simulated(key, *sim_params)
+        else:
+            self._make_from_mzml(key, raw_data_path)
+
+    def _make_simulated(self, key, seed: int, n_scans: int):
+        from lcms_demo.simulation.generators import generate_chromatogram
+
+        scans_data = generate_chromatogram(n_scans=n_scans, seed=seed)
+
+        spectrum_entries = []
+        for scan_number, scan_data in enumerate(scans_data, start=1):
+            spectrum_entries.append({
+                **key,
+                "scan_number": scan_number,
+                "mz_array": scan_data["mz_array"],
+                "intensity_array": scan_data["intensity_array"],
+            })
+
+        self.insert1(key)
+        self.Spectrum.insert(spectrum_entries)
+
+    def _make_from_mzml(self, key, raw_data_path: str):
+        from pyteomics import mzml
 
         spectrum_entries = []
         with mzml.read(raw_data_path) as reader:
