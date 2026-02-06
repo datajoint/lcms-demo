@@ -59,7 +59,7 @@ def acquire_nvs4821_study(
     >>> summary = acquire_nvs4821_study(n_scans_per_session=50, seed=42)
     >>> print(f"Created {summary['subjects']} subjects")
     """
-    from lcms_demo import subject
+    from lcms_demo.pipeline import subject
 
     base_date = datetime(2026, 1, 1)
     sessions_created = []
