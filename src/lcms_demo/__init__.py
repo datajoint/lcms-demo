@@ -7,7 +7,6 @@ LC-MS (Liquid Chromatography-Mass Spectrometry) data pipeline.
 Structure
 ---------
 - lcms_demo.pipeline: Schema definitions (subject, session, scan)
-- lcms_demo.ingest: Functions for ingesting real mzML data
 - lcms_demo.simulation: Functions for generating simulated data
 
 Example
@@ -18,4 +17,4 @@ Example
 
 __version__ = "0.1.0"
 
-__all__ = ["__version__", "pipeline", "ingest", "simulation"]
+__all__ = ["__version__", "pipeline", "simulation"]
