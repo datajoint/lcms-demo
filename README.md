@@ -121,6 +121,8 @@ lcms-demo/
 ├── tests/
 │   ├── unit/                 # Fast tests (no database)
 │   └── integration/          # Database tests
+├── scripts/
+│   └── run_notebooks.py      # Execute notebooks with outputs
 ├── local/                    # Docker PostgreSQL setup
 ├── datajoint.json.example    # Configuration template
 ├── .secrets.example/         # Credentials template
@@ -171,6 +173,25 @@ pytest -v
 ruff check src/
 ruff format src/
 ```
+
+## Running Notebooks
+
+The `notebooks/` folder contains Jupyter notebooks demonstrating the pipeline.
+To execute all notebooks and save outputs:
+
+```bash
+# Install notebook dependencies
+pip install lcms-demo[notebooks]
+
+# Start database
+cd local && docker compose up -d && cd ..
+
+# Execute all notebooks with saved outputs
+python scripts/run_notebooks.py
+```
+
+This runs notebooks in order (01_setup, 02_visualize, 03_populate, 04_query)
+and saves all outputs (diagrams, tables, plots) inline.
 
 ## License
 

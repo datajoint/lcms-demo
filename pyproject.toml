@@ -39,7 +39,7 @@ dependencies = [
 [project.optional-dependencies]
 mzml = ["pyteomics"]
 plotting = ["matplotlib"]
-notebooks = ["jupyter", "ipykernel"]
+notebooks = ["jupyter", "ipykernel", "matplotlib", "nbconvert"]
 
 [project.urls]
 Homepage = "https://github.com/datajoint/lcms-demo"
