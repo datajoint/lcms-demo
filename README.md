@@ -113,6 +113,11 @@ lcms-demo/
 │       ├── session.py        # Instrument, Method, Session tables
 │       ├── scan.py           # Scan, Spectrum, PeakList tables
 │       └── simulation/       # Data generation utilities
+├── notebooks/                # Jupyter notebooks
+│   ├── 01_setup.ipynb        # Configuration and instantiation
+│   ├── 02_visualize.ipynb    # Schema diagrams
+│   ├── 03_populate.ipynb     # Data population
+│   └── 04_query.ipynb        # Query examples
 ├── tests/
 │   ├── unit/                 # Fast tests (no database)
 │   └── integration/          # Database tests
