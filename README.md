@@ -49,13 +49,13 @@ session.Session()
 scan.Scan()
 ```
 
-### 3. Populate Demo Data
+### 3. Acquire Demo Data
 
 ```python
-from lcms_demo.simulation import populate_demo_data
+from lcms_demo.simulation import acquire_demo_data
 
 # Generate simple demo dataset
-summary = populate_demo_data(n_subjects=3, scans_per_session=50)
+summary = acquire_demo_data(n_subjects=3, scans_per_session=50)
 print(f"Created {summary['sessions']} sessions")
 ```
 
@@ -89,16 +89,9 @@ The `database_prefix` automatically prefixes all schema names (e.g., `subject` �
 # Start local PostgreSQL
 cd local && docker compose up -d
 
-# Configure via environment
-export DJ_HOST=localhost
-export DJ_USER=datajoint
-export DJ_PASS=datajoint
-
-# Or use the helper function
-python -c "from lcms_demo.config import use_local_database; use_local_database()"
-
+# The datajoint.json is pre-configured for local development
 # Import and use
-from lcms_demo import subject, session, scan
+from lcms_demo.pipeline import subject, session, scan
 ```
 
 ## Project Structure
@@ -108,24 +101,22 @@ lcms-demo/
 ├── src/
 │   └── lcms_demo/
 │       ├── __init__.py       # Package initialization
-│       ├── config.py         # Configuration utilities
-│       ├── subject.py        # Subject, Sample tables
-│       ├── session.py        # Instrument, Method, Session tables
-│       ├── scan.py           # Scan, Spectrum, PeakList tables
+│       ├── pipeline/         # Schema definitions
+│       │   ├── subject.py    # Subject, Sample tables
+│       │   ├── session.py    # Instrument, Method, Session tables
+│       │   └── scan.py       # Scans, Spectra, Peaks tables
 │       └── simulation/       # Data generation utilities
 ├── notebooks/                # Jupyter notebooks
-│   ├── 01_setup.ipynb        # Configuration and instantiation
-│   ├── 02_visualize.ipynb    # Schema diagrams
-│   ├── 03_populate.ipynb     # Data population
-│   └── 04_query.ipynb        # Query examples
+│   ├── 01_inspect.ipynb      # Pipeline diagram and data
+│   ├── 02_acquire.ipynb      # Data acquisition
+│   └── 03_query.ipynb        # Query examples
 ├── tests/
 │   ├── unit/                 # Fast tests (no database)
 │   └── integration/          # Database tests
 ├── scripts/
 │   └── run_notebooks.py      # Execute notebooks with outputs
 ├── local/                    # Docker PostgreSQL setup
-├── datajoint.json.example    # Configuration template
-├── .secrets.example/         # Credentials template
+├── datajoint.json            # Database configuration
 └── pyproject.toml            # Package configuration
 ```
 
@@ -134,9 +125,9 @@ lcms-demo/
 ### Generic Demo Data
 
 ```python
-from lcms_demo.simulation import populate_demo_data
+from lcms_demo.simulation import acquire_demo_data
 
-summary = populate_demo_data(
+summary = acquire_demo_data(
     n_subjects=5,
     samples_per_subject=2,
     scans_per_session=100,
@@ -149,9 +140,9 @@ summary = populate_demo_data(
 A preclinical study with treatment groups and time-course sampling:
 
 ```python
-from lcms_demo.simulation import populate_nvs4821_study
+from lcms_demo.simulation import acquire_nvs4821_study
 
-summary = populate_nvs4821_study(
+summary = acquire_nvs4821_study(
     n_scans_per_session=100,
     seed=42,
 )
@@ -190,7 +181,7 @@ cd local && docker compose up -d && cd ..
 python scripts/run_notebooks.py
 ```
 
-This runs notebooks in order (01_setup, 02_visualize, 03_populate, 04_query)
+This runs notebooks in order (01_inspect, 02_acquire, 03_query)
 and saves all outputs (diagrams, tables, plots) inline.
 
 ## License

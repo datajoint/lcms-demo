@@ -1,11 +1,11 @@
-"""Functions to populate Manual tables with simulated session metadata."""
+"""Functions to acquire simulated session metadata into Manual tables."""
 
 from datetime import datetime
 
 from lcms_demo.pipeline import session, subject
 
 
-def populate_session(
+def acquire_session(
     subject_id: str,
     sample_id: str,
     sample_type: str = "plasma",
@@ -15,7 +15,7 @@ def populate_session(
     n_scans: int = 50,
 ) -> dict:
     """
-    Populate Manual tables for a session.
+    Acquire a simulated session into Manual tables.
 
     Inserts Subject, Sample, and Session entries. The Session.raw_data_path
     encodes simulation parameters that the make methods will use.
@@ -65,13 +65,13 @@ def populate_session(
     return session_key
 
 
-def populate_demo_data(
+def acquire_demo_data(
     n_subjects: int = 3,
     samples_per_subject: int = 2,
     scans_per_session: int = 50,
     seed: int = 42,
 ) -> dict:
-    """Populate Manual tables with demo dataset metadata."""
+    """Acquire demo dataset metadata into Manual tables."""
     sample_types = ["plasma", "liver", "urine"]
     sessions_created = []
 
@@ -82,7 +82,7 @@ def populate_demo_data(
             sample_id = f"SAMPLE_{sample_idx + 1:03d}"
             sample_type = sample_types[sample_idx % len(sample_types)]
 
-            session_key = populate_session(
+            session_key = acquire_session(
                 subject_id=subject_id,
                 sample_id=sample_id,
                 sample_type=sample_type,

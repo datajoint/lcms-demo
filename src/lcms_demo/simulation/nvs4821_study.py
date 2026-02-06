@@ -16,7 +16,7 @@ Treatment Groups
 
 from datetime import datetime, timedelta
 
-from lcms_demo.simulation.populate import populate_session
+from lcms_demo.simulation.acquire import acquire_session
 
 # Study design constants
 TREATMENT_GROUPS = [
@@ -32,13 +32,13 @@ SAMPLE_TYPES = ["plasma", "liver"]
 IONIZATION_MODES = [("POS_METAB", "positive"), ("NEG_METAB", "negative")]
 
 
-def populate_nvs4821_study(
+def acquire_nvs4821_study(
     n_scans_per_session: int = 100,
     seed: int = 42,
     verbose: bool = True,
 ) -> dict:
     """
-    Populate tables with NVS-4821 hepatotoxicity study data.
+    Acquire NVS-4821 hepatotoxicity study data into Manual tables.
 
     Parameters
     ----------
@@ -56,7 +56,7 @@ def populate_nvs4821_study(
 
     Example
     -------
-    >>> summary = populate_nvs4821_study(n_scans_per_session=50, seed=42)
+    >>> summary = acquire_nvs4821_study(n_scans_per_session=50, seed=42)
     >>> print(f"Created {summary['subjects']} subjects")
     """
     from lcms_demo import subject
@@ -104,7 +104,7 @@ def populate_nvs4821_study(
                     for method_id, mode in IONIZATION_MODES:
                         session_seed = seed + subject_count * 1000 + timepoint_day * 10 + hash(sample_type + mode) % 100
 
-                        session_key = populate_session(
+                        session_key = acquire_session(
                             subject_id=subject_id,
                             sample_id=sample_id,
                             sample_type=sample_type,
