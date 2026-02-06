@@ -4,19 +4,6 @@ A demonstration DataJoint pipeline for LC-MS (Liquid Chromatography-Mass Spectro
 
 This project showcases DataJoint 2.1 best practices with a realistic scientific workflow.
 
-## Schema Overview
-
-```mermaid
-erDiagram
-    Subject ||--o{ Sample : contains
-    Sample ||--o{ Session : "analyzed in"
-    Instrument ||--o{ Session : uses
-    AcquisitionMethod ||--o{ Session : uses
-    Session ||--o{ Scan : contains
-    Scan ||--|| ScanSpectrum : has
-    ScanSpectrum ||--o{ PeakList : "processed into"
-```
-
 ## Installation
 
 ```bash
