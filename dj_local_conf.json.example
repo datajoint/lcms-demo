@@ -1,0 +1,9 @@
+{
+    "database.host": "db.datajoint.com",
+    "database.port": 3306,
+    "database.user": "YOUR_USERNAME",
+    "database.password": "YOUR_PASSWORD",
+    "custom": {
+        "schema_prefix": "lcms_demo_"
+    }
+}
