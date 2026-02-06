@@ -1,16 +1,7 @@
 """
 Scan schema for LC-MS pipeline.
 
-Defines tables for scan metadata, spectral data, and peak detection.
-
-Tables
-------
-Scan : Imported
-    Individual scan metadata within a session.
-ScanSpectrum : Imported
-    Mass spectrum arrays (m/z and intensity).
-PeakList : Computed
-    Detected peaks with Peak part table.
+Tables: Scans, Spectra, Peaks (with Part tables for individual data)
 """
 
 import datajoint as dj
@@ -18,56 +9,32 @@ import numpy as np
 
 from lcms_demo import session
 
-# Schema name is automatically prefixed by dj.config.database.database_prefix
 schema = dj.Schema("scan")
 
 
 @schema
-class Scan(dj.Imported):
-    """
-    Individual scan within an LC-MS session.
-
-    Attributes
-    ----------
-    scan_number : int
-        Sequential scan number within the session.
-    retention_time : double
-        Retention time in minutes.
-    ms_level : tinyint unsigned
-        MS level (1 for MS1, 2 for MS2).
-    total_ion_current : double
-        Total ion current for the scan.
-    base_peak_mz : double
-        m/z of the most intense peak.
-    base_peak_intensity : double
-        Intensity of the most intense peak.
-    """
-
+class Scans(dj.Imported):
     definition = """
-    # Individual scan within a session
+    # All scans for a session
     -> session.Session
-    scan_number : int
     ---
-    retention_time : double  # minutes
-    ms_level : tinyint unsigned  # 1=MS1, 2=MS2
-    total_ion_current : double
-    base_peak_mz : double
-    base_peak_intensity : double
+    n_scans : int32  # total number of scans
     """
+
+    class Scan(dj.Part):
+        definition = """
+        # Individual scan within a session
+        -> master
+        scan_number : int32
+        ---
+        retention_time : float64  # minutes
+        ms_level : int32  # 1=MS1, 2=MS2
+        total_ion_current : float64
+        base_peak_mz : float64
+        base_peak_intensity : float64
+        """
 
     def make(self, key):
-        """
-        Populate scan data from raw mzML files.
-
-        Parameters
-        ----------
-        key : dict
-            Primary key of the Session to populate.
-
-        Notes
-        -----
-        Requires pyteomics package: pip install pyteomics
-        """
         from pyteomics import mzml
 
         raw_data_path = (session.Session & key).fetch1("raw_data_path")
@@ -102,153 +69,108 @@ class Scan(dj.Imported):
                     "base_peak_intensity": base_peak_intensity,
                 })
 
-        self.insert(scan_entries)
+        self.insert1({**key, "n_scans": len(scan_entries)})
+        self.Scan.insert(scan_entries)
 
 
 @schema
-class ScanSpectrum(dj.Imported):
-    """
-    Mass spectrum data for each scan.
-
-    Attributes
-    ----------
-    mz_array : longblob
-        Array of m/z values (numpy float32).
-    intensity_array : longblob
-        Array of intensity values (numpy float32).
-    """
-
+class Spectra(dj.Imported):
     definition = """
-    # Mass spectrum arrays
-    -> Scan
-    ---
-    mz_array : longblob  # m/z values
-    intensity_array : longblob  # intensity values
+    # All spectra for a session
+    -> Scans
     """
+
+    class Spectrum(dj.Part):
+        definition = """
+        # Mass spectrum arrays for one scan
+        -> master
+        scan_number : int32  # matches Scans.Scan
+        ---
+        mz_array : <blob>  # m/z values
+        intensity_array : <blob>  # intensity values
+        """
 
     def make(self, key):
-        """
-        Extract spectrum arrays from raw mzML data.
-
-        Parameters
-        ----------
-        key : dict
-            Primary key of the Scan.
-        """
         from pyteomics import mzml
 
-        scan_info = (Scan & key).fetch1()
-        session_key = {
-            k: scan_info[k]
-            for k in ["subject_id", "sample_id", "session_datetime"]
-        }
-        raw_data_path = (session.Session & session_key).fetch1("raw_data_path")
+        raw_data_path = (session.Session & key).fetch1("raw_data_path")
 
-        scan_number = key["scan_number"]
+        spectrum_entries = []
         with mzml.read(raw_data_path) as reader:
-            for idx, spectrum in enumerate(reader, start=1):
-                if idx == scan_number:
-                    mz_array = np.array(spectrum["m/z array"], dtype=np.float32)
-                    intensity_array = np.array(
-                        spectrum["intensity array"], dtype=np.float32
-                    )
-                    self.insert1({
-                        **key,
-                        "mz_array": mz_array,
-                        "intensity_array": intensity_array,
-                    })
-                    break
+            for scan_number, spectrum in enumerate(reader, start=1):
+                mz_array = np.array(spectrum["m/z array"], dtype=np.float32)
+                intensity_array = np.array(spectrum["intensity array"], dtype=np.float32)
+
+                spectrum_entries.append({
+                    **key,
+                    "scan_number": scan_number,
+                    "mz_array": mz_array,
+                    "intensity_array": intensity_array,
+                })
+
+        self.insert1(key)
+        self.Spectrum.insert(spectrum_entries)
 
 
 @schema
-class PeakList(dj.Computed):
-    """
-    Detected peaks from scan spectra.
-
-    Attributes
-    ----------
-    peak_count : int
-        Number of peaks detected.
-    """
-
+class Peaks(dj.Computed):
     definition = """
-    # Detected peaks
-    -> ScanSpectrum
+    # All detected peaks for a session
+    -> Spectra
     ---
-    peak_count : int
+    total_peaks : int32  # total peaks across all scans
     """
 
     class Peak(dj.Part):
-        """
-        Individual detected peak.
-
-        Attributes
-        ----------
-        peak_idx : int
-            Index of the peak within the scan.
-        mz : double
-            m/z value of the peak.
-        intensity : double
-            Intensity of the peak.
-        snr : double
-            Signal-to-noise ratio.
-        """
-
         definition = """
-        # Individual peak
+        # Individual detected peak
         -> master
-        peak_idx : int
+        scan_number : int32  # matches Spectra.Spectrum
+        peak_idx : int32
         ---
-        mz : double
-        intensity : double
-        snr : double
+        mz : float64
+        intensity : float64
+        snr : float64  # signal-to-noise ratio
         """
 
     def make(self, key):
-        """
-        Detect peaks using scipy's find_peaks algorithm.
-
-        Parameters
-        ----------
-        key : dict
-            Primary key of the ScanSpectrum.
-        """
         from scipy.signal import find_peaks
         from scipy.stats import median_abs_deviation
 
-        spectrum = (ScanSpectrum & key).fetch1()
-        mz_array = spectrum["mz_array"]
-        intensity_array = spectrum["intensity_array"]
+        spectra = (Spectra.Spectrum & key).fetch(as_dict=True)
 
-        # Estimate noise level using MAD
-        noise_level = 1.4826 * median_abs_deviation(intensity_array)
-        if noise_level == 0:
-            noise_level = 1.0
-
-        # Find peaks
-        peak_indices, _ = find_peaks(
-            intensity_array,
-            height=3 * noise_level,
-            prominence=2 * noise_level,
-            distance=3,
-        )
-
-        # Build peak entries
         peak_entries = []
-        for idx, peak_idx in enumerate(peak_indices):
-            peak_mz = float(mz_array[peak_idx])
-            peak_intensity = float(intensity_array[peak_idx])
-            snr = peak_intensity / noise_level
+        for spectrum in spectra:
+            mz_array = spectrum["mz_array"]
+            intensity_array = spectrum["intensity_array"]
 
-            peak_entries.append({
-                **key,
-                "peak_idx": idx,
-                "mz": peak_mz,
-                "intensity": peak_intensity,
-                "snr": float(snr),
-            })
+            # Estimate noise level using MAD
+            noise_level = 1.4826 * median_abs_deviation(intensity_array)
+            if noise_level == 0:
+                noise_level = 1.0
 
-        self.insert1({**key, "peak_count": len(peak_entries)})
+            # Find peaks
+            peak_indices, _ = find_peaks(
+                intensity_array,
+                height=3 * noise_level,
+                prominence=2 * noise_level,
+                distance=3,
+            )
 
+            for idx, peak_idx in enumerate(peak_indices):
+                peak_mz = float(mz_array[peak_idx])
+                peak_intensity = float(intensity_array[peak_idx])
+                snr = peak_intensity / noise_level
+
+                peak_entries.append({
+                    **key,
+                    "scan_number": spectrum["scan_number"],
+                    "peak_idx": idx,
+                    "mz": peak_mz,
+                    "intensity": peak_intensity,
+                    "snr": float(snr),
+                })
+
+        self.insert1({**key, "total_peaks": len(peak_entries)})
         if peak_entries:
             self.Peak.insert(peak_entries)

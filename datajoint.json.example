@@ -1,6 +1,7 @@
 {
     "database": {
         "host": "localhost",
+        "backend": "postgresql",
         "user": null,
         "password": null,
         "database_prefix": "lcms_"

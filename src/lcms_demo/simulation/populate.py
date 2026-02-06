@@ -20,36 +20,8 @@ def populate_session(
     """
     Populate a complete session with simulated data.
 
-    Creates Subject, Sample, Session, Scan, and ScanSpectrum entries
+    Creates Subject, Sample, Session, Scans, and Spectra entries
     with synthetic LC-MS data.
-
-    Parameters
-    ----------
-    subject_id : str
-        Subject identifier.
-    sample_id : str
-        Sample identifier.
-    sample_type : str
-        Type of sample (e.g., 'plasma', 'liver').
-    n_scans : int
-        Number of scans to generate.
-    instrument_id : str
-        Instrument ID (must exist in Instrument lookup).
-    method_id : str
-        Method ID (must exist in AcquisitionMethod lookup).
-    seed : int, optional
-        Random seed for reproducibility.
-
-    Returns
-    -------
-    dict
-        Session primary key.
-
-    Example
-    -------
-    >>> session_key = populate_session('SUBJ_01', 'SAMPLE_01', n_scans=50, seed=42)
-    >>> session_key
-    {'subject_id': 'SUBJ_01', 'sample_id': 'SAMPLE_01', 'session_datetime': ...}
     """
     # Insert subject if not exists
     if not (subject.Subject & {"subject_id": subject_id}):
@@ -83,9 +55,16 @@ def populate_session(
         "session_notes": f"Simulated data with seed={seed}",
     })
 
-    # Generate and insert scan data
+    # Generate scan data
     scans_data = generate_chromatogram(n_scans=n_scans, seed=seed)
 
+    # Insert Scans master entry
+    scan.Scans.insert1(
+        {**session_key, "n_scans": len(scans_data)},
+        allow_direct_insert=True,
+    )
+
+    # Insert individual scans into Part table
     scan_entries = []
     spectrum_entries = []
 
@@ -107,9 +86,13 @@ def populate_session(
             "intensity_array": scan_data["intensity_array"],
         })
 
-    # Batch insert
-    scan.Scan.insert(scan_entries)
-    scan.ScanSpectrum.insert(spectrum_entries)
+    scan.Scans.Scan.insert(scan_entries, allow_direct_insert=True)
+
+    # Insert Spectra master entry
+    scan.Spectra.insert1(session_key, allow_direct_insert=True)
+
+    # Insert individual spectra into Part table
+    scan.Spectra.Spectrum.insert(spectrum_entries, allow_direct_insert=True)
 
     return session_key
 
@@ -122,27 +105,6 @@ def populate_demo_data(
 ) -> dict:
     """
     Populate tables with a complete demo dataset.
-
-    Parameters
-    ----------
-    n_subjects : int
-        Number of subjects to create.
-    samples_per_subject : int
-        Number of samples per subject.
-    scans_per_session : int
-        Number of scans per session.
-    seed : int
-        Random seed for reproducibility.
-
-    Returns
-    -------
-    dict
-        Summary of created data.
-
-    Example
-    -------
-    >>> summary = populate_demo_data(n_subjects=2, scans_per_session=20)
-    >>> print(f"Created {summary['sessions']} sessions")
     """
     sample_types = ["plasma", "liver", "urine"]
     sessions_created = []

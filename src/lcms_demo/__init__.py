@@ -15,15 +15,12 @@ __version__ = "0.1.0"
 
 def __getattr__(name):
     """Lazy import schema modules to avoid database connection at import time."""
-    if name == "subject":
-        from lcms_demo import subject
-        return subject
-    elif name == "session":
-        from lcms_demo import session
-        return session
-    elif name == "scan":
-        from lcms_demo import scan
-        return scan
+    import importlib
+
+    if name in ("subject", "session", "scan"):
+        module = importlib.import_module(f".{name}", __name__)
+        globals()[name] = module
+        return module
     raise AttributeError(f"module {__name__!r} has no attribute {name!r}")
 
 

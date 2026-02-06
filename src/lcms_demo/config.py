@@ -34,7 +34,7 @@ import os
 
 def use_local_database() -> None:
     """
-    Configure DataJoint to use local Docker MySQL.
+    Configure DataJoint to use local Docker PostgreSQL.
 
     Sets environment variables to connect to localhost with default
     credentials (datajoint/datajoint).
@@ -48,6 +48,7 @@ def use_local_database() -> None:
     os.environ["DJ_HOST"] = "localhost"
     os.environ["DJ_USER"] = "datajoint"
     os.environ["DJ_PASS"] = "datajoint"
+    os.environ["DJ_BACKEND"] = "postgresql"
 
 
 def use_remote_database() -> None:
