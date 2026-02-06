@@ -12,6 +12,19 @@ Example
 
 __version__ = "0.1.0"
 
-from lcms_demo import scan, session, subject
+
+def __getattr__(name):
+    """Lazy import schema modules to avoid database connection at import time."""
+    if name == "subject":
+        from lcms_demo import subject
+        return subject
+    elif name == "session":
+        from lcms_demo import session
+        return session
+    elif name == "scan":
+        from lcms_demo import scan
+        return scan
+    raise AttributeError(f"module {__name__!r} has no attribute {name!r}")
+
 
 __all__ = ["subject", "session", "scan", "__version__"]
