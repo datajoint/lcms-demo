@@ -25,7 +25,7 @@ class TestDatabaseConnection:
         assert len(subject.Sample()) >= 0
         assert len(session.Instrument()) >= 0
         assert len(session.Session()) >= 0
-        assert len(scan.Scans.Scan()) >= 0
+        assert len(scan.Acquisition.Scan()) >= 0
 
 
 @pytest.mark.integration
@@ -62,5 +62,5 @@ class TestDataPopulation:
         assert len(session.Session()) == 2
 
         # Populate downstream tables
-        scan.Scans.populate(display_progress=False)
-        assert len(scan.Scans.Scan()) == 20  # 2 sessions x 10 scans
+        scan.Acquisition.populate(display_progress=False)
+        assert len(scan.Acquisition.Scan()) == 20  # 2 sessions x 10 scans

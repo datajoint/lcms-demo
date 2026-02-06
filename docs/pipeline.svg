@@ -1,0 +1,169 @@
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="914pt" height="235pt" viewBox="0.00 0.00 914.36 235.00">
+<g id="graph0" class="graph" transform="scale(1 1) rotate(0) translate(4 231)">
+<polygon fill="white" stroke="none" points="-4,4 -4,-231 910.36,-231 910.36,4 -4,4"/>
+<g id="clust1" class="cluster">
+<title>cluster_cluster_subject</title>
+<polygon fill="none" stroke="gray" stroke-dasharray="5,2" points="8,-144 8,-219 193.25,-219 193.25,-144 8,-144"/>
+<text text-anchor="middle" x="100.62" y="-201.7" font-family="Times,serif" font-size="14.00" fill="gray">subject</text>
+</g>
+<g id="clust2" class="cluster">
+<title>cluster_cluster_session</title>
+<polygon fill="none" stroke="gray" stroke-dasharray="5,2" points="100.5,-8 100.5,-136 308.25,-136 308.25,-8 100.5,-8"/>
+<text text-anchor="middle" x="204.38" y="-118.7" font-family="Times,serif" font-size="14.00" fill="gray">session</text>
+</g>
+<g id="clust3" class="cluster">
+<title>cluster_cluster_scan</title>
+<polygon fill="none" stroke="gray" stroke-dasharray="5,2" points="328.25,-42 328.25,-155 898.36,-155 898.36,-42 328.25,-42"/>
+<text text-anchor="middle" x="613.31" y="-137.7" font-family="Times,serif" font-size="14.00" fill="gray">scan</text>
+</g>
+<!-- subject.Subject -->
+<g id="node1" class="node">
+<title>subject.Subject</title>
+<g id="a_node1"><a xlink:title="subject_id           ------------------------------subject_description=&quot;''">
+<polygon fill="#00ff00" fill-opacity="0.188235" stroke="#00ff00" stroke-opacity="0.188235" points="72.5,-186.28 16,-186.28 16,-151.72 72.5,-151.72 72.5,-186.28"/>
+<text text-anchor="start" x="24" y="-165.72" font-family="arial" text-decoration="underline" font-size="12.00" fill="darkgreen">Subject</text>
+</a>
+</g>
+</g>
+<!-- subject.Sample -->
+<g id="node4" class="node">
+<title>subject.Sample</title>
+<g id="a_node4"><a xlink:title="→ subject.Subjectsample_id            ------------------------------sample_type          collection_datetime=null sample_description=&quot;''">
+<polygon fill="#00ff00" fill-opacity="0.188235" stroke="#00ff00" stroke-opacity="0.188235" points="185.25,-186.28 128,-186.28 128,-151.72 185.25,-151.72 185.25,-186.28"/>
+<text text-anchor="start" x="136" y="-165.72" font-family="arial" text-decoration="underline" font-size="12.00" fill="darkgreen">Sample</text>
+</a>
+</g>
+</g>
+<!-- subject.Subject&#45;&gt;subject.Sample -->
+<g id="edge1" class="edge">
+<title>subject.Subject-&gt;subject.Sample</title>
+<path fill="none" stroke="#000000" stroke-width="0.75" stroke-opacity="0.250980" d="M72.82,-169C89.55,-169 110.84,-169 127.64,-169"/>
+</g>
+<!-- session.Instrument -->
+<g id="node2" class="node">
+<title>session.Instrument</title>
+<g id="a_node2"><a xlink:title="instrument_id        ------------------------------instrument_name      manufacturer=&quot;''model=&quot;''">
+<polygon fill="#000000" fill-opacity="0.125490" stroke="none" points="187.88,-50.28 125.38,-50.28 125.38,-15.72 187.88,-15.72 187.88,-50.28"/>
+<text text-anchor="start" x="133.38" y="-30.5" font-family="arial" text-decoration="underline" font-size="10.00">Instrument</text>
+</a>
+</g>
+</g>
+<!-- session.Session -->
+<g id="node7" class="node">
+<title>session.Session</title>
+<g id="a_node7"><a xlink:title="→ subject.Samplesession_idx          ------------------------------session_datetime     → session.Instrument→ session.AcquisitionMethodraw_data_path        session_notes=&quot;''">
+<polygon fill="#00ff00" fill-opacity="0.188235" stroke="#00ff00" stroke-opacity="0.188235" points="300.25,-103.28 240.75,-103.28 240.75,-68.72 300.25,-68.72 300.25,-103.28"/>
+<text text-anchor="start" x="248.75" y="-82.72" font-family="arial" text-decoration="underline" font-size="12.00" fill="darkgreen">Session</text>
+</a>
+</g>
+</g>
+<!-- session.Instrument&#45;&gt;session.Session -->
+<g id="edge3" class="edge">
+<title>session.Instrument-&gt;session.Session</title>
+<path fill="none" stroke="#000000" stroke-width="0.75" stroke-dasharray="5,2" stroke-opacity="0.250980" d="M187.61,-47.2C204.05,-54.99 224.33,-64.6 240.6,-72.31"/>
+</g>
+<!-- scan.Acquisition -->
+<g id="node3" class="node">
+<title>scan.Acquisition</title>
+<g id="a_node3"><a xlink:title="→ session.Session------------------------------n_scans              ">
+<ellipse fill="#00007f" fill-opacity="0.250980" stroke="#00007f" stroke-opacity="0.250980" cx="385.42" cy="-86" rx="49.17" ry="17.28"/>
+<text text-anchor="middle" x="385.42" y="-81.72" font-family="arial" font-size="12.00" fill="#00007f" fill-opacity="0.627451">Acquisition</text>
+</a>
+</g>
+</g>
+<!-- scan.Acquisition.Scan -->
+<g id="node6" class="node">
+<title>scan.Acquisition.Scan</title>
+<g id="a_node6"><a xlink:title="→ scan.Acquisitionscan_number          ------------------------------retention_time       ms_level             total_ion_current    base_peak_mz         base_peak_intensity  ">
+<polygon fill="none" stroke="none" points="574.31,-70 484.81,-70 484.81,-50 574.31,-50 574.31,-70"/>
+<text text-anchor="start" x="492.81" y="-57.5" font-family="arial" text-decoration="underline" font-size="10.00">Acquisition.Scan</text>
+</a>
+</g>
+</g>
+<!-- scan.Acquisition&#45;&gt;scan.Acquisition.Scan -->
+<g id="edge6" class="edge">
+<title>scan.Acquisition-&gt;scan.Acquisition.Scan</title>
+<path fill="none" stroke="#000000" stroke-width="0.75" stroke-opacity="0.250980" d="M429.84,-78.06C447.31,-74.86 467.43,-71.18 484.92,-67.98"/>
+</g>
+<!-- scan.MassAnalysis -->
+<g id="node8" class="node">
+<title>scan.MassAnalysis</title>
+<g id="a_node8"><a xlink:title="→ scan.Acquisition">
+<ellipse fill="#00007f" fill-opacity="0.250980" stroke="#00007f" stroke-opacity="0.250980" cx="529.56" cy="-105" rx="58.97" ry="17.28"/>
+<text text-anchor="middle" x="529.56" y="-100.72" font-family="arial" font-size="12.00" fill="#00007f" fill-opacity="0.627451">MassAnalysis</text>
+</a>
+</g>
+</g>
+<!-- scan.Acquisition&#45;&gt;scan.MassAnalysis -->
+<g id="edge7" class="edge">
+<title>scan.Acquisition-&gt;scan.MassAnalysis</title>
+<path fill="none" stroke="#000000" stroke-width="2" stroke-opacity="0.250980" d="M431.79,-92.06C445.6,-93.91 460.91,-95.96 475.2,-97.87"/>
+</g>
+<!-- subject.Sample&#45;&gt;session.Session -->
+<g id="edge2" class="edge">
+<title>subject.Sample-&gt;session.Session</title>
+<path fill="none" stroke="#000000" stroke-width="0.75" stroke-opacity="0.250980" d="M185.47,-152.78C191.92,-148.78 198.67,-144.37 204.75,-140 220.56,-128.63 237.42,-114.5 249.97,-103.55"/>
+</g>
+<!-- session.AcquisitionMethod -->
+<g id="node5" class="node">
+<title>session.AcquisitionMethod</title>
+<g id="a_node5"><a xlink:title="method_id            ------------------------------method_name          ionization_mode      method_description=&quot;''">
+<polygon fill="#000000" fill-opacity="0.125490" stroke="none" points="204.75,-103.28 108.5,-103.28 108.5,-68.72 204.75,-68.72 204.75,-103.28"/>
+<text text-anchor="start" x="116.5" y="-83.5" font-family="arial" text-decoration="underline" font-size="10.00">AcquisitionMethod</text>
+</a>
+</g>
+</g>
+<!-- session.AcquisitionMethod&#45;&gt;session.Session -->
+<g id="edge4" class="edge">
+<title>session.AcquisitionMethod-&gt;session.Session</title>
+<path fill="none" stroke="#000000" stroke-width="0.75" stroke-dasharray="5,2" stroke-opacity="0.250980" d="M204.75,-86C216.81,-86 229.43,-86 240.3,-86"/>
+</g>
+<!-- session.Session&#45;&gt;scan.Acquisition -->
+<g id="edge5" class="edge">
+<title>session.Session-&gt;scan.Acquisition</title>
+<path fill="none" stroke="#000000" stroke-width="2" stroke-opacity="0.250980" d="M300.58,-86C311.43,-86 324.05,-86 336.17,-86"/>
+</g>
+<!-- scan.MassAnalysis.Spectrum -->
+<g id="node9" class="node">
+<title>scan.MassAnalysis.Spectrum</title>
+<g id="a_node9"><a xlink:title="→ scan.MassAnalysisscan_number          ------------------------------mz_array             intensity_array      ">
+<polygon fill="none" stroke="none" points="747.7,-70 625.2,-70 625.2,-50 747.7,-50 747.7,-70"/>
+<text text-anchor="start" x="633.2" y="-57.5" font-family="arial" text-decoration="underline" font-size="10.00">MassAnalysis.Spectrum</text>
+</a>
+</g>
+</g>
+<!-- scan.MassAnalysis&#45;&gt;scan.MassAnalysis.Spectrum -->
+<g id="edge8" class="edge">
+<title>scan.MassAnalysis-&gt;scan.MassAnalysis.Spectrum</title>
+<path fill="none" stroke="#000000" stroke-width="0.75" stroke-opacity="0.250980" d="M572.48,-92.82C597.12,-85.66 627.88,-76.73 651.08,-69.99"/>
+</g>
+<!-- scan.PeakDetection -->
+<g id="node10" class="node">
+<title>scan.PeakDetection</title>
+<g id="a_node10"><a xlink:title="→ scan.MassAnalysis------------------------------total_peaks          ">
+<ellipse fill="#ff0000" fill-opacity="0.125490" stroke="#ff0000" stroke-opacity="0.125490" cx="686.45" cy="-105" rx="61.91" ry="17.28"/>
+<text text-anchor="middle" x="686.45" y="-100.72" font-family="arial" font-size="12.00" fill="#7f0000" fill-opacity="0.627451">PeakDetection</text>
+</a>
+</g>
+</g>
+<!-- scan.MassAnalysis&#45;&gt;scan.PeakDetection -->
+<g id="edge9" class="edge">
+<title>scan.MassAnalysis-&gt;scan.PeakDetection</title>
+<path fill="none" stroke="#000000" stroke-width="2" stroke-opacity="0.250980" d="M588.68,-105C600.27,-105 612.47,-105 624.16,-105"/>
+</g>
+<!-- scan.PeakDetection.Peak -->
+<g id="node11" class="node">
+<title>scan.PeakDetection.Peak</title>
+<g id="a_node11"><a xlink:title="→ scan.PeakDetectionscan_number          peak_idx             ------------------------------mz                   intensity            snr                  ">
+<polygon fill="none" stroke="none" points="890.36,-115 784.36,-115 784.36,-95 890.36,-95 890.36,-115"/>
+<text text-anchor="start" x="792.36" y="-102.5" font-family="arial" text-decoration="underline" font-size="10.00">PeakDetection.Peak</text>
+</a>
+</g>
+</g>
+<!-- scan.PeakDetection&#45;&gt;scan.PeakDetection.Peak -->
+<g id="edge10" class="edge">
+<title>scan.PeakDetection-&gt;scan.PeakDetection.Peak</title>
+<path fill="none" stroke="#000000" stroke-width="0.75" stroke-opacity="0.250980" d="M748.45,-105C760.5,-105 773.03,-105 784.73,-105"/>
+</g>
+</g>
+</svg>

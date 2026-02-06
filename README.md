@@ -4,6 +4,27 @@ A demonstration DataJoint pipeline for LC-MS (Liquid Chromatography-Mass Spectro
 
 This project showcases DataJoint 2.1 best practices with a realistic scientific workflow.
 
+## Pipeline Overview
+
+![Pipeline Diagram](docs/pipeline.svg)
+
+The pipeline models the LC-MS data analysis workflow:
+
+1. **Subject & Sample**: Metadata about biological subjects and collected samples (plasma, liver tissue, etc.)
+
+2. **Session**: An LC-MS instrument run, linking a sample to raw data files and acquisition parameters
+
+3. **Acquisition**: Imports scan-level metadata from raw LC-MS files (retention time, total ion current, base peak m/z)
+
+4. **MassAnalysis**: Extracts full mass spectral arrays (m/z and intensity vectors) for each scan
+
+5. **PeakDetection**: Detects peaks in each spectrum using signal processing algorithms (scipy.signal.find_peaks)
+
+Tables are named after the **process** they represent, while part tables contain the **artifacts** produced by that process:
+- `Acquisition` → `Acquisition.Scan` (individual scan metadata)
+- `MassAnalysis` → `MassAnalysis.Spectrum` (full m/z and intensity arrays)
+- `PeakDetection` → `PeakDetection.Peak` (detected peaks with SNR)
+
 ## Installation
 
 ```bash
@@ -41,12 +62,12 @@ echo "your_password" > .secrets/database.password
 ### 2. Use the Pipeline
 
 ```python
-from lcms_demo import subject, session, scan
+from lcms_demo.pipeline import subject, session, scan
 
 # View tables
 subject.Subject()
 session.Session()
-scan.Scan()
+scan.Acquisition()
 ```
 
 ### 3. Acquire Demo Data
@@ -104,7 +125,7 @@ lcms-demo/
 │       ├── pipeline/         # Schema definitions
 │       │   ├── subject.py    # Subject, Sample tables
 │       │   ├── session.py    # Instrument, Method, Session tables
-│       │   └── scan.py       # Scans, Spectra, Peaks tables
+│       │   └── scan.py       # Acquisition, MassAnalysis, PeakDetection tables
 │       └── simulation/       # Data generation utilities
 ├── notebooks/                # Jupyter notebooks
 │   ├── 01_inspect.ipynb      # Pipeline diagram and data

@@ -1,7 +1,10 @@
 """
 Scan schema for LC-MS pipeline.
 
-Tables: Scans, Spectra, Peaks (with Part tables for individual data)
+Tables named after the processes in the workflow:
+- Acquisition: importing scan data from raw files
+- MassAnalysis: extracting full spectral arrays
+- PeakDetection: detecting peaks in spectra
 """
 
 import datajoint as dj
@@ -21,9 +24,9 @@ def _parse_simulated_path(raw_data_path: str) -> tuple[int, int] | None:
 
 
 @schema
-class Scans(dj.Imported):
+class Acquisition(dj.Imported):
     definition = """
-    # All scans for a session
+    # LC-MS data acquisition from raw file
     -> session.Session
     ---
     n_scans : int32  # total number of scans
@@ -31,7 +34,7 @@ class Scans(dj.Imported):
 
     class Scan(dj.Part):
         definition = """
-        # Individual scan within a session
+        # Individual scan from the acquisition
         -> master
         scan_number : int32
         ---
@@ -109,17 +112,17 @@ class Scans(dj.Imported):
 
 
 @schema
-class Spectra(dj.Imported):
+class MassAnalysis(dj.Imported):
     definition = """
-    # All spectra for a session
-    -> Scans
+    # Mass spectral data extraction
+    -> Acquisition
     """
 
     class Spectrum(dj.Part):
         definition = """
-        # Mass spectrum arrays for one scan
+        # Full mass spectrum for one scan
         -> master
-        scan_number : int32  # matches Scans.Scan
+        scan_number : int32  # matches Acquisition.Scan
         ---
         mz_array : <blob>  # m/z values
         intensity_array : <blob>  # intensity values
@@ -172,10 +175,10 @@ class Spectra(dj.Imported):
 
 
 @schema
-class Peaks(dj.Computed):
+class PeakDetection(dj.Computed):
     definition = """
-    # All detected peaks for a session
-    -> Spectra
+    # Peak detection in mass spectra
+    -> MassAnalysis
     ---
     total_peaks : int32  # total peaks across all scans
     """
@@ -184,7 +187,7 @@ class Peaks(dj.Computed):
         definition = """
         # Individual detected peak
         -> master
-        scan_number : int32  # matches Spectra.Spectrum
+        scan_number : int32  # matches MassAnalysis.Spectrum
         peak_idx : int32
         ---
         mz : float64
@@ -196,7 +199,7 @@ class Peaks(dj.Computed):
         from scipy.signal import find_peaks
         from scipy.stats import median_abs_deviation
 
-        spectra = (Spectra.Spectrum & key).fetch(as_dict=True)
+        spectra = (MassAnalysis.Spectrum & key).fetch(as_dict=True)
 
         peak_entries = []
         for spectrum in spectra:
