@@ -4,7 +4,6 @@
         "port": 5432,
         "backend": "postgresql",
         "user": "datajoint",
-        "password": "datajoint",
-        "database_prefix": "lcms_"
+        "password": "datajoint"
     }
 }

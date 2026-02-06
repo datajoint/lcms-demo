@@ -67,12 +67,13 @@ print(f"Created {summary['sessions']} sessions")
 {
     "database": {
         "host": "localhost",
-        "database_prefix": "lcms_"
+        "port": 5432,
+        "backend": "postgresql",
+        "user": "datajoint",
+        "password": "datajoint"
     }
 }
 ```
-
-The `database_prefix` automatically prefixes all schema names (e.g., `subject` â†’ `lcms_subject`).
 
 ### Environment Variables
 
@@ -81,7 +82,6 @@ The `database_prefix` automatically prefixes all schema names (e.g., `subject` â
 | `DJ_HOST` | Database hostname |
 | `DJ_USER` | Database username |
 | `DJ_PASS` | Database password |
-| `DJ_DATABASE_PREFIX` | Schema name prefix |
 
 ## Local Development with Docker
 
