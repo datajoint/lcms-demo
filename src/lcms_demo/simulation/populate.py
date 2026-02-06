@@ -1,9 +1,4 @@
-"""
-Functions to populate Manual tables with simulated session metadata.
-
-After calling these functions, use .populate() on Imported/Computed tables
-to generate the scan data.
-"""
+"""Functions to populate Manual tables with simulated session metadata."""
 
 from datetime import datetime
 
@@ -24,11 +19,6 @@ def populate_session(
 
     Inserts Subject, Sample, and Session entries. The Session.raw_data_path
     encodes simulation parameters that the make methods will use.
-
-    After calling this, use:
-        scan.Scans.populate()
-        scan.Spectra.populate()
-        scan.Peaks.populate()
     """
     # Insert subject if not exists
     if not (subject.Subject & {"subject_id": subject_id}):
@@ -81,15 +71,7 @@ def populate_demo_data(
     scans_per_session: int = 50,
     seed: int = 42,
 ) -> dict:
-    """
-    Populate Manual tables with demo dataset metadata.
-
-    After calling this, run:
-        from lcms_demo.pipeline import scan
-        scan.Scans.populate()
-        scan.Spectra.populate()
-        scan.Peaks.populate()
-    """
+    """Populate Manual tables with demo dataset metadata."""
     sample_types = ["plasma", "liver", "urine"]
     sessions_created = []
 

@@ -37,8 +37,7 @@ ENV/
 htmlcov/
 .tox/
 
-# DataJoint configuration (contains credentials)
-datajoint.json
+# DataJoint configuration secrets
 .secrets/
 
 # OS
