@@ -175,10 +175,29 @@ class MassAnalysis(dj.Imported):
 
 
 @schema
+class PeakDetectionParams(dj.Lookup):
+    definition = """
+    # Parameters for peak detection algorithm
+    peak_params_id : int16
+    ---
+    height_factor : float64  # SNR threshold for peak height (multiplier of noise)
+    prominence_factor : float64  # SNR threshold for prominence (multiplier of noise)
+    min_distance : int32  # minimum distance between peaks (in samples)
+    peak_params_desc : varchar(255)
+    """
+    contents = [
+        (0, 3.0, 2.0, 3, "Default: height=3x, prominence=2x noise"),
+        (1, 2.0, 1.5, 2, "Sensitive: lower thresholds, more peaks"),
+        (2, 5.0, 3.0, 5, "Stringent: higher thresholds, fewer peaks"),
+    ]
+
+
+@schema
 class PeakDetection(dj.Computed):
     definition = """
     # Peak detection in mass spectra
     -> MassAnalysis
+    -> PeakDetectionParams
     ---
     total_peaks : int32  # total peaks across all scans
     """
@@ -199,6 +218,12 @@ class PeakDetection(dj.Computed):
         from scipy.signal import find_peaks
         from scipy.stats import median_abs_deviation
 
+        # Fetch parameters
+        params = (PeakDetectionParams & key).fetch1()
+        height_factor = params["height_factor"]
+        prominence_factor = params["prominence_factor"]
+        min_distance = params["min_distance"]
+
         spectra = (MassAnalysis.Spectrum & key).fetch(as_dict=True)
 
         peak_entries = []
@@ -212,9 +237,9 @@ class PeakDetection(dj.Computed):
 
             peak_indices, _ = find_peaks(
                 intensity_array,
-                height=3 * noise_level,
-                prominence=2 * noise_level,
-                distance=3,
+                height=height_factor * noise_level,
+                prominence=prominence_factor * noise_level,
+                distance=min_distance,
             )
 
             for idx, peak_idx in enumerate(peak_indices):
