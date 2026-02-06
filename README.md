@@ -54,22 +54,21 @@ uv sync --group dev
 
 ### 1. Configure Database (DataJoint 2.1)
 
-DataJoint 2.1 uses a layered configuration system:
-
-```bash
-# Copy configuration templates
-cp datajoint.json.example datajoint.json
-cp -r .secrets.example .secrets
-
-# Edit credentials in .secrets/
-echo "your_username" > .secrets/database.user
-echo "your_password" > .secrets/database.password
-```
+DataJoint 2.1 uses a layered configuration system. Non-sensitive settings go in `datajoint.json`, while credentials come from secrets or environment variables.
 
 **Configuration sources (in priority order):**
 1. Environment variables (`DJ_HOST`, `DJ_USER`, `DJ_PASS`, etc.)
-2. Secrets directory (`.secrets/database.user`, `.secrets/database.password`)
+2. Secrets directory (`.secrets/database.password`)
 3. Config file (`datajoint.json`)
+
+```bash
+# Set password via environment variable
+export DJ_PASS="your_password"
+
+# Or use a secrets file
+mkdir -p .secrets
+echo "your_password" > .secrets/database.password
+```
 
 ### 2. Use the Pipeline
 
@@ -96,17 +95,20 @@ print(f"Created {summary['sessions']} sessions")
 
 ### datajoint.json
 
+Non-sensitive settings (host, port, user) go in `datajoint.json`:
+
 ```json
 {
     "database": {
         "host": "localhost",
         "port": 5432,
         "backend": "postgresql",
-        "user": "datajoint",
-        "password": "datajoint"
+        "user": "datajoint"
     }
 }
 ```
+
+**Important:** Never store passwords in `datajoint.json`. Use environment variables or secrets files instead.
 
 ### Environment Variables
 
@@ -114,7 +116,11 @@ print(f"Created {summary['sessions']} sessions")
 |----------|-------------|
 | `DJ_HOST` | Database hostname |
 | `DJ_USER` | Database username |
-| `DJ_PASS` | Database password |
+| `DJ_PASS` | Database password (recommended for credentials) |
+
+### Secrets Directory
+
+Create `.secrets/database.password` containing just the password. Add `.secrets/` to `.gitignore`.
 
 ## Local Development with Docker
 
