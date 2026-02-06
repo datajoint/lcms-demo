@@ -86,7 +86,7 @@ The `database_prefix` automatically prefixes all schema names (e.g., `subject` �
 ## Local Development with Docker
 
 ```bash
-# Start local MySQL
+# Start local PostgreSQL
 cd local && docker compose up -d
 
 # Configure via environment
@@ -116,7 +116,7 @@ lcms-demo/
 ├── tests/
 │   ├── unit/                 # Fast tests (no database)
 │   └── integration/          # Database tests
-├── local/                    # Docker MySQL setup
+├── local/                    # Docker PostgreSQL setup
 ├── datajoint.json.example    # Configuration template
 ├── .secrets.example/         # Credentials template
 └── pyproject.toml            # Package configuration

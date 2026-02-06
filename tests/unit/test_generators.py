@@ -3,7 +3,6 @@ Unit tests for spectrum generation utilities.
 """
 
 import numpy as np
-import pytest
 
 from lcms_demo.simulation.generators import generate_chromatogram, generate_spectrum
 

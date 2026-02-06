@@ -52,7 +52,7 @@ Changelog = "https://github.com/datajoint/lcms-demo/releases"
 test = [
     "pytest>=8.0",
     "pytest-cov",
-    "testcontainers[mysql]>=4.0",
+    "testcontainers[postgres]>=4.0",
 ]
 lint = [
     "ruff>=0.4",

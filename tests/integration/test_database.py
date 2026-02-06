@@ -9,14 +9,14 @@ import pytest
 class TestDatabaseConnection:
     """Test database connectivity."""
 
-    def test_connection(self, mysql_container):
+    def test_connection(self, postgres_container):
         """Should connect to database successfully."""
         import datajoint as dj
 
         conn = dj.conn()
         assert conn.is_connected
 
-    def test_schema_creation(self, mysql_container, clean_schemas):
+    def test_schema_creation(self, postgres_container, clean_schemas):
         """Should create schemas and tables."""
         from lcms_demo import scan, session, subject
 
@@ -32,7 +32,7 @@ class TestDatabaseConnection:
 class TestDataPopulation:
     """Test data insertion and queries."""
 
-    def test_insert_subject(self, mysql_container, clean_schemas):
+    def test_insert_subject(self, postgres_container, clean_schemas):
         """Should insert and retrieve a subject."""
         from lcms_demo import subject
 
@@ -44,7 +44,7 @@ class TestDataPopulation:
         result = (subject.Subject & {"subject_id": "TEST_001"}).fetch1()
         assert result["subject_id"] == "TEST_001"
 
-    def test_populate_demo_data(self, mysql_container, clean_schemas):
+    def test_populate_demo_data(self, postgres_container, clean_schemas):
         """Should populate demo data successfully."""
         from lcms_demo import scan, session, subject
         from lcms_demo.simulation import populate_demo_data
@@ -60,4 +60,4 @@ class TestDataPopulation:
         assert len(subject.Subject()) == 2
         assert len(subject.Sample()) == 2
         assert len(session.Session()) == 2
-        assert len(scan.Scan()) == 20  # 2 sessions × 10 scans
+        assert len(scan.Scan()) == 20  # 2 sessions x 10 scans
