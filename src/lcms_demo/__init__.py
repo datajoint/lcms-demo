@@ -14,14 +14,14 @@ __version__ = "0.1.0"
 
 
 def __getattr__(name):
-    """Lazy import schema modules to avoid database connection at import time."""
+    """Lazy import modules to avoid database connection at import time."""
     import importlib
 
-    if name in ("subject", "session", "scan"):
+    if name in ("subject", "session", "scan", "ingest"):
         module = importlib.import_module(f".{name}", __name__)
         globals()[name] = module
         return module
     raise AttributeError(f"module {__name__!r} has no attribute {name!r}")
 
 
-__all__ = ["__version__", "scan", "session", "subject"]
+__all__ = ["__version__", "ingest", "scan", "session", "subject"]
