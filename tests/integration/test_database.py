@@ -64,3 +64,17 @@ class TestDataPopulation:
         # Populate downstream tables
         scan.Acquisition.populate(display_progress=False)
         assert len(scan.Acquisition.Scan()) == 20  # 2 sessions x 10 scans
+
+        # Populate the tables whose parts foreign-key the upstream scan/spectrum.
+        # These populates only succeed if those foreign keys are satisfiable —
+        # i.e. every spectrum's scan and every peak's spectrum already exist.
+        scan.MassAnalysis.populate(display_progress=False)
+        assert len(scan.MassAnalysis.Spectrum()) == 20  # one spectrum per scan
+
+        scan.PeakDetection.populate(display_progress=False)
+        assert len(scan.PeakDetection()) == 6  # 2 sessions x 3 param sets
+        assert len(scan.PeakDetection.Peak()) > 0
+        # Referential integrity now enforced by the part foreign keys:
+        # no spectrum without its scan, and no peak without its spectrum.
+        assert len(scan.MassAnalysis.Spectrum - scan.Acquisition.Scan) == 0
+        assert len(scan.PeakDetection.Peak - scan.MassAnalysis.Spectrum) == 0

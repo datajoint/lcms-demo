@@ -122,7 +122,7 @@ class MassAnalysis(dj.Imported):
         definition = """
         # Full mass spectrum for one scan
         -> master
-        scan_number : int32  # matches Acquisition.Scan
+        -> Acquisition.Scan
         ---
         mz_array : <blob>  # m/z values
         intensity_array : <blob>  # intensity values
@@ -206,7 +206,7 @@ class PeakDetection(dj.Computed):
         definition = """
         # Individual detected peak
         -> master
-        scan_number : int32  # matches MassAnalysis.Spectrum
+        -> MassAnalysis.Spectrum
         peak_idx : int32
         ---
         mz : float64
