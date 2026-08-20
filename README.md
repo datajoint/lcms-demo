@@ -2,7 +2,7 @@
 
 A demonstration DataJoint pipeline for LC-MS (Liquid Chromatography-Mass Spectrometry) data processing.
 
-This project showcases DataJoint 2.1 best practices with a realistic scientific workflow.
+This project showcases DataJoint 2.3 best practices with a realistic scientific workflow.
 
 ## Pipeline Overview
 
@@ -52,9 +52,9 @@ uv sync --group dev
 
 ## Quick Start
 
-### 1. Configure Database (DataJoint 2.1)
+### 1. Configure Database (DataJoint 2.3)
 
-DataJoint 2.1 uses a layered configuration system. Non-sensitive settings go in `datajoint.json`, while credentials come from secrets or environment variables.
+DataJoint 2.3 uses a layered configuration system. Non-sensitive settings go in `datajoint.json`, while credentials come from secrets or environment variables.
 
 **Configuration sources (in priority order):**
 1. Environment variables (`DJ_HOST`, `DJ_USER`, `DJ_PASS`, etc.)
