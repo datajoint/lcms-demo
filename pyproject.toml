@@ -30,7 +30,7 @@ classifiers = [
     "Topic :: Scientific/Engineering :: Bio-Informatics",
 ]
 dependencies = [
-    "datajoint[postgres]>=2.1.0",
+    "datajoint[postgres]>=2.3.0",
     "numpy",
     "pandas",
     "scipy",
